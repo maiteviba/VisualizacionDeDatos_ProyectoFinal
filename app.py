@@ -31,8 +31,8 @@ PAGINAS = ["Visualización global",
            "Información por estado", 
            "Comparación ventas con y sin ahorro"]
 
-tiendas = sorted(df['store_nbr'].unique())
-estados = sorted(df['state'].unique())
+tiendas = sorted(df['store_nbr'].dropna().unique())
+estados = sorted(df['state'].dropna().unique())
 
 
 # Menu lateral
@@ -209,7 +209,7 @@ if pagina == "Comparación ventas con y sin ahorro":
     promo = (df[df['onpromotion']>0].groupby('month')['sales'].sum().sort_index())
     no_promo = (df[df['onpromotion']==0].groupby('month')['sales'].sum().sort_index())
 
-    meses = [calendar.month_name[m] for m in promo.index]
+    meses = [calendar.month_name[int(m)] for m in promo.index]
 
     x = np.arange(len(meses))
     width = 0.4
@@ -240,5 +240,5 @@ if pagina == "Comparación ventas con y sin ahorro":
     top_no_promo.columns = ['Mes', 'Categoría sin promoción']
 
     tabla_categorias = top_no_promo.merge(top_promo, on="Mes", how="inner").sort_values("Mes")
-    tabla_categorias['Mes'] = tabla_categorias['Mes'].apply(lambda x: calendar.month_name[x])
+    tabla_categorias['Mes'] = tabla_categorias['Mes'].apply(lambda x: calendar.month_name[int(x)])
     st.table(tabla_categorias)
